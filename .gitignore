@@ -1,0 +1,26 @@
+# ── Secretos y configuración local ───────────────────────────────────────
+.env
+*.env
+!.env.example
+
+# ── Base de datos y artefactos generados ─────────────────────────────────
+*.db
+*.sqlite3
+out/
+tmp/
+certificados.db
+
+# ── Python ───────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# ── Sistema operativo / editores ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

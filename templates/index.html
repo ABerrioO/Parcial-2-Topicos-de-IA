@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Certificado Unilasallista · Tópicos de IA</title>
+<style>
+  :root {
+    --verde: #006647;
+    --verde-claro: #e8f3ee;
+    --gris: #4a4a4a;
+    --gris-claro: #f4f6f5;
+    --borde: #dfe5e2;
+    --rojo: #b3261e;
+    --ambar: #b26a00;
+    --azul: #0b5cad;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+    background: var(--gris-claro);
+    color: #1f2933;
+  }
+  header {
+    background: var(--verde);
+    color: #fff;
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  header h1 { margin: 0; font-size: 1.35rem; letter-spacing: .3px; }
+  header p { margin: 4px 0 0; font-size: .85rem; opacity: .9; }
+  header .spacer { flex: 1; }
+  .chip {
+    background: rgba(255,255,255,.16);
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: .78rem;
+    white-space: nowrap;
+  }
+  main { max-width: 1180px; margin: 0 auto; padding: 24px 20px 60px; }
+  .panel {
+    background: #fff;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(16,32,26,.06);
+  }
+  .panel h2 {
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+    color: var(--verde);
+  }
+  .panel .sub { margin: 0 0 16px; font-size: .82rem; color: var(--gris); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  label { display: block; font-size: .78rem; font-weight: 600; margin-bottom: 5px; color: var(--gris); }
+  input[type=text], select, input[type=file] {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    font-size: .9rem;
+    font-family: inherit;
+    background: #fff;
+  }
+  input:focus, select:focus { outline: 2px solid var(--verde-claro); border-color: var(--verde); }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; align-items: center; }
+  button {
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: .9rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button.primary { background: var(--verde); color: #fff; }
+  button.primary:hover { background: #004f38; }
+  button.secondary { background: var(--verde-claro); color: var(--verde); }
+  button.ghost { background: transparent; border: 1px solid var(--borde); color: var(--gris); }
+  button:disabled { opacity: .55; cursor: not-allowed; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  .stat {
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: #fff;
+  }
+  .stat .value { font-size: 1.5rem; font-weight: 700; color: var(--verde); }
+  .stat .label { font-size: .74rem; text-transform: uppercase; letter-spacing: .4px; color: var(--gris); }
+  .stat.ok .value { color: var(--verde); }
+  .stat.error .value { color: var(--rojo); }
+  .stat.omit .value { color: var(--ambar); }
+  table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--borde); }
+  th { font-size: .72rem; text-transform: uppercase; letter-spacing: .4px; color: var(--gris); }
+  tbody tr:hover { background: #fafcfb; }
+  .badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: .72rem;
+    font-weight: 700;
+  }
+  .badge.OK { background: #e2f3e9; color: var(--verde); }
+  .badge.ERROR { background: #fdeceb; color: var(--rojo); }
+  .badge.OMITIDO { background: #fdf1de; color: var(--ambar); }
+  .badge.PENDIENTE { background: #e8f0fa; color: var(--azul); }
+  .badge.GENERADO { background: #e0f2fe; color: #0284c7; }
+  .btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    font-size: .75rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    border: 1px solid transparent;
+    font-family: inherit;
+    transition: all 0.15s ease;
+  }
+  .btn-action.ver { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
+  .btn-action.ver:hover { background: #bae6fd; color: #0284c7; }
+  .btn-action.descargar { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+  .btn-action.descargar:hover { background: #e2e8f0; color: #1e293b; }
+  .scroll { max-height: 380px; overflow: auto; border: 1px solid var(--borde); border-radius: 8px; }
+  .scroll table thead th { position: sticky; top: 0; background: #fff; z-index: 1; }
+  .msg { margin-top: 14px; padding: 11px 14px; border-radius: 8px; font-size: .85rem; display: none; }
+  .msg.ok { display: block; background: #e2f3e9; color: var(--verde); }
+  .msg.err { display: block; background: #fdeceb; color: var(--rojo); }
+  .msg.info { display: block; background: #e8f0fa; color: var(--azul); }
+  .muted { color: var(--gris); font-size: .8rem; }
+  code { background: #eef2f0; padding: 1px 5px; border-radius: 4px; font-size: .82rem; }
+  .badge-ia { background: #efe6ff; color: #5b21b6; }
+  footer { text-align: center; color: var(--gris); font-size: .76rem; padding: 18px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🎓 Certificado Unilasallista</h1>
+    <p>Universidad de La Salle · Proyecto aplicado de Tópicos de Inteligencia Artificial · 2026-II</p>
+  </div>
+  <div class="spacer"></div>
+  <span class="chip" id="chip-smtp">SMTP: verificando…</span>
+  <span class="chip" id="chip-ia">IA: verificando…</span>
+</header>
+
+<main>
+  <!-- ── Carga ───────────────────────────────────────────────────────── -->
+  <section class="panel">
+    <h2>1. Cargar evento</h2>
+    <p class="sub">Libro Excel con las cinco hojas: Asistentes, Ponentes, Conferenciantes, Evaluadores y Organizadores.</p>
+    <div class="grid">
+      <div>
+        <label for="excel">Archivo Excel (.xlsx)</label>
+        <input type="file" id="excel" accept=".xlsx,.xlsm">
+      </div>
+      <div>
+        <label for="evento">Nombre del evento</label>
+        <input type="text" id="evento" placeholder="Congreso Internacional 2026-II">
+      </div>
+      <div>
+        <label for="dependencia">Dependencia organizadora</label>
+        <input type="text" id="dependencia" placeholder="Facultad de Ingeniería">
+      </div>
+      <div>
+        <label for="plantilla">Plantilla del certificado</label>
+        <select id="plantilla"><option value="">Diseño propio (sin plantilla)</option></select>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="secondary" id="btn-validar">Validar con IA (sin enviar)</button>
+      <button class="secondary" id="btn-generar" style="background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd;">📄 Generar certificados (sin enviar)</button>
+      <button class="primary" id="btn-procesar">🚀 Procesar y enviar correos</button>
+      <button class="ghost" id="btn-smtp">Probar conexión SMTP</button>
+    </div>
+    <div class="msg" id="msg"></div>
+  </section>
+
+  <!-- ── Resultado ───────────────────────────────────────────────────── -->
+  <section class="panel" id="panel-resultado" style="display:none">
+    <h2>2. Resultado del procesamiento</h2>
+    <p class="sub" id="sub-resultado"></p>
+    <div class="stats" id="stats"></div>
+    <div class="scroll" style="margin-top:16px">
+      <table>
+        <thead>
+          <tr><th>Correo</th><th>Nombre</th><th>Rol</th><th>Estado</th><th>Detalle</th><th style="text-align:center">Certificado</th></tr>
+        </thead>
+        <tbody id="tbody-resultado"></tbody>
+      </table>
+    </div>
+    <div id="advertencias" style="margin-top:12px"></div>
+  </section>
+
+  <!-- ── Análisis IA ─────────────────────────────────────────────────── -->
+  <section class="panel" id="panel-ia" style="display:none">
+    <h2>3. Análisis de IA aplicado</h2>
+    <p class="sub">Normalización de nombres (PLN), detección de duplicados por similitud fuzzy, mapeo semántico de encabezados y anomalías.</p>
+    <div id="ia-contenido"></div>
+  </section>
+
+  <!-- ── Trazabilidad ────────────────────────────────────────────────── -->
+  <section class="panel">
+    <h2>4. Trazabilidad de envíos</h2>
+    <p class="sub">Registro de envíos exitosos, fallidos y omitidos en SQLite (RF6).</p>
+    <div class="actions" style="margin-top:0;margin-bottom:14px">
+      <select id="filtro-evento" style="max-width:280px"><option value="">Todos los eventos</option></select>
+      <select id="filtro-estado" style="max-width:180px">
+        <option value="">Todos los estados</option>
+        <option value="GENERADO">GENERADO</option>
+        <option value="OK">OK</option>
+        <option value="ERROR">ERROR</option>
+        <option value="OMITIDO">OMITIDO</option>
+        <option value="PENDIENTE">PENDIENTE</option>
+      </select>
+      <button class="ghost" id="btn-refrescar">Actualizar</button>
+    </div>
+    <div class="stats" id="stats-trazabilidad" style="margin-bottom:14px"></div>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Evento</th><th>Rol</th><th>Nombre</th><th>Correo</th><th>Estado</th><th>Fecha</th><th style="text-align:center">Certificado</th></tr>
+        </thead>
+        <tbody id="tbody-trazabilidad"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── Modal Visor de Certificado ─────────────────────────────────────── -->
+  <div id="modal-visor" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.7); z-index:9999; backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:16px;">
+    <div style="background:#fff; border-radius:12px; width:100%; max-width:980px; height:88vh; display:flex; flex-direction:column; box-shadow:0 20px 45px rgba(0,0,0,0.35); overflow:hidden;">
+      <div style="padding:12px 18px; background:var(--verde); color:#fff; display:flex; align-items:center; justify-content:space-between; gap:12px;">
+        <div style="font-weight:600; font-size:.95rem; display:flex; align-items:center; gap:8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+          <span>🎓 Visor de Certificado:</span>
+          <span id="visor-titulo" style="font-weight:400; opacity:.95; font-size:.88rem;"></span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <a id="btn-visor-pestana" href="#" target="_blank" class="btn-action" style="background:rgba(255,255,255,.2); color:#fff; border-color:rgba(255,255,255,.4);">↗ Abrir pestaña</a>
+          <a id="btn-visor-descargar" href="#" class="btn-action" style="background:rgba(255,255,255,.2); color:#fff; border-color:rgba(255,255,255,.4);">⬇ Descargar PDF</a>
+          <button type="button" onclick="cerrarVisor()" class="btn-action" style="background:rgba(255,255,255,.3); color:#fff; font-size:1rem; padding:3px 9px;">✕</button>
+        </div>
+      </div>
+      <div style="flex:1; background:#475569; position:relative;">
+        <iframe id="iframe-visor" src="" style="width:100%; height:100%; border:none;"></iframe>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>Certificado Unilasallista · Datos ficticios para demostración · Ley 1581 de 2012 (Habeas Data)</footer>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+function mostrarMensaje(texto, tipo = "info") {
+  const msg = $("msg");
+  msg.className = "msg " + tipo;
+  msg.textContent = texto;
+}
+
+function badge(estado) {
+  return `<span class="badge ${estado}">${estado}</span>`;
+}
+
+async function cargarPlantillas() {
+  const res = await fetch("/api/plantillas");
+  const data = await res.json();
+  const select = $("plantilla");
+  const plantillas = data.plantillas || [];
+  // La plantilla institucional por defecto queda preseleccionada.
+  const predeterminada = plantillas.find((p) => p.por_defecto) || plantillas[0];
+  plantillas.forEach((p) => {
+    const opt = document.createElement("option");
+    opt.value = p.ruta;
+    opt.textContent = p.por_defecto
+      ? `${p.nombre} (${p.tamano_kb} KB) — institucional`
+      : `${p.nombre} (${p.tamano_kb} KB)`;
+    select.appendChild(opt);
+  });
+  if (predeterminada) select.value = predeterminada.ruta;
+}
+
+async function cargarEstado() {
+  const res = await fetch("/api/salud");
+  const data = await res.json();
+  $("chip-smtp").textContent = data.smtp.modo_simulacion
+    ? "SMTP: modo simulación"
+    : `SMTP: ${data.smtp.host}:${data.smtp.puerto}`;
+  $("chip-ia").textContent = data.ia.llm
+    ? "IA: PLN + fuzzy + LLM"
+    : "IA: PLN + fuzzy";
+}
+
+function formulario() {
+  const data = new FormData();
+  const archivo = $("excel").files[0];
+  if (!archivo) { mostrarMensaje("Seleccione un archivo Excel.", "err"); return null; }
+  data.append("excel", archivo);
+  data.append("evento", $("evento").value.trim());
+  data.append("dependencia", $("dependencia").value.trim() || "Dependencia organizadora");
+  data.append("plantilla", $("plantilla").value);
+  return data;
+}
+
+async function validar() {
+  const data = formulario();
+  if (!data) return;
+  $("btn-validar").disabled = true;
+  mostrarMensaje("Analizando el archivo con los módulos de IA…", "info");
+  try {
+    const res = await fetch("/api/validar", { method: "POST", body: data });
+    const json = await res.json();
+    if (!json.ok) { mostrarMensaje(json.mensaje || "Error de validación.", "err"); return; }
+    renderIA(json);
+    mostrarMensaje(
+      `Validación completada: ${json.resumen.total_participantes} participantes, ` +
+      `${json.resumen.duplicados} duplicados y ${json.resumen.anomalias} anomalías detectadas.`,
+      json.resumen.errores_campos.length ? "err" : "ok"
+    );
+  } catch (e) {
+    mostrarMensaje("Error de conexión: " + e.message, "err");
+  } finally {
+    $("btn-validar").disabled = false;
+  }
+}
+
+function renderIA(json) {
+  const panel = $("panel-ia");
+  panel.style.display = "block";
+  let html = "<table><thead><tr><th>Rol</th><th>Participantes</th><th>Duplicados</th>" +
+             "<th>Anomalías</th><th>Encabezados normalizados</th></tr></thead><tbody>";
+  json.roles.forEach((r) => {
+    const mapeo = Object.entries(r.mapeo || {})
+      .map(([k, v]) => `<code>${k}</code> → <code>${v}</code>`).join(", ") || "—";
+    html += `<tr><td><strong>${r.rol}</strong></td><td>${r.participantes}</td>` +
+            `<td>${r.duplicados.length ? `<span class="badge badge-ia">${r.duplicados.length}</span>` : "0"}</td>` +
+            `<td>${r.anomalias.length ? `<span class="badge ERROR">${r.anomalias.length}</span>` : "0"}</td>` +
+            `<td class="muted">${mapeo}</td></tr>`;
+  });
+  html += "</tbody></table>";
+
+  const duplicados = json.roles.flatMap((r) => r.duplicados.map((d) => ({ rol: r.rol, ...d })));
+  if (duplicados.length) {
+    html += "<h3 style='font-size:.9rem;margin-top:18px'>Duplicados detectados por similitud fuzzy</h3>" +
+            "<table><thead><tr><th>Rol</th><th>Tipo</th><th>Valores</th><th>Similitud</th></tr></thead><tbody>";
+    duplicados.forEach((d) => {
+      html += `<tr><td>${d.rol}</td><td>${d.tipo}</td><td class="muted">${d.valores.join(" ~ ")}</td>` +
+              `<td>${d.similitud}%</td></tr>`;
+    });
+    html += "</tbody></table>";
+  }
+
+  const anomalias = json.roles.flatMap((r) => r.anomalias.map((a) => ({ rol: r.rol, ...a })));
+  if (anomalias.length) {
+    html += "<h3 style='font-size:.9rem;margin-top:18px'>Anomalías</h3>" +
+            "<table><thead><tr><th>Rol</th><th>Fila</th><th>Correo</th><th>Problemas</th></tr></thead><tbody>";
+    anomalias.forEach((a) => {
+      html += `<tr><td>${a.rol}</td><td>${a.fila}</td><td class="muted">${a.correo || "—"}</td>` +
+              `<td class="muted">${a.problemas.join("; ")}</td></tr>`;
+    });
+    html += "</tbody></table>";
+  }
+
+  $("ia-contenido").innerHTML = html;
+}
+
+async function generar() {
+  const data = formulario();
+  if (!data) return;
+  if (!$("evento").value.trim()) { mostrarMensaje("Indique el nombre del evento.", "err"); return; }
+  data.append("modo", "generar");
+  $("btn-generar").disabled = true;
+  mostrarMensaje("Generando certificados PDF (sin enviar correos)…", "info");
+  try {
+    const res = await fetch("/procesar", { method: "POST", body: data });
+    const json = await res.json();
+    if (!json.ok) {
+      mostrarMensaje(json.mensaje || "Error al generar los certificados.", "err");
+      if (json.errores) json.errores.forEach((e) => mostrarMensaje(e, "err"));
+      return;
+    }
+    renderResultado(json);
+    mostrarMensaje(
+      `¡Listo! Se generaron ${json.resumen.GENERADO || 0} certificados para "${json.evento}" en ${json.duracion_seg}s. Ya puedes verlos en la tabla con el botón 👁 Ver.`,
+      "ok"
+    );
+    cargarTrazabilidad();
+  } catch (e) {
+    mostrarMensaje("Error de conexión: " + e.message, "err");
+  } finally {
+    $("btn-generar").disabled = false;
+  }
+}
+
+async function procesar() {
+  const data = formulario();
+  if (!data) return;
+  if (!$("evento").value.trim()) { mostrarMensaje("Indique el nombre del evento.", "err"); return; }
+  $("btn-procesar").disabled = true;
+  mostrarMensaje("Procesando evento: validando, generando PDF y enviando…", "info");
+  try {
+    const res = await fetch("/procesar", { method: "POST", body: data });
+    const json = await res.json();
+    if (!json.ok) {
+      mostrarMensaje(json.mensaje || "Error al procesar el evento.", "err");
+      if (json.errores) {
+        json.errores.forEach((e) => mostrarMensaje(e, "err"));
+      }
+      return;
+    }
+    renderResultado(json);
+    mostrarMensaje(
+      `Evento "${json.evento}" procesado: ${json.total} participantes en ${json.duracion_seg}s.`,
+      json.resumen.ERROR ? "info" : "ok"
+    );
+    cargarTrazabilidad();
+  } catch (e) {
+    mostrarMensaje("Error de conexión: " + e.message, "err");
+  } finally {
+    $("btn-procesar").disabled = false;
+  }
+}
+
+function verCertificado(correo) {
+  const url = `/certificados/${encodeURIComponent(correo)}`;
+  $("visor-titulo").textContent = correo;
+  $("iframe-visor").src = url;
+  $("btn-visor-pestana").href = url;
+  $("btn-visor-descargar").href = `${url}?descargar=1`;
+  $("modal-visor").style.display = "flex";
+}
+
+function cerrarVisor() {
+  $("modal-visor").style.display = "none";
+  $("iframe-visor").src = "";
+}
+
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") cerrarVisor();
+});
+
+$("modal-visor").addEventListener("click", (e) => {
+  if (e.target === $("modal-visor")) cerrarVisor();
+});
+
+function renderResultado(json) {
+  $("panel-resultado").style.display = "block";
+  const modoTexto = json.modo === "generacion"
+    ? "generación de certificados (sin enviar)"
+    : (json.modo === "envio" ? "envío de correos" : "solo validación");
+  $("sub-resultado").textContent =
+    `Modo: ${modoTexto} · Evento: ${json.evento} · Dependencia: ${json.dependencia}`;
+
+  const stats = $("stats");
+  stats.innerHTML = `
+    <div class="stat"><div class="value">${json.total}</div><div class="label">Total</div></div>
+    <div class="stat" style="color:#0284c7"><div class="value" style="color:#0284c7">${json.resumen.GENERADO || 0}</div><div class="label">Generados</div></div>
+    <div class="stat ok"><div class="value">${json.resumen.OK || 0}</div><div class="label">Enviados</div></div>
+    <div class="stat error"><div class="value">${json.resumen.ERROR || 0}</div><div class="label">Errores</div></div>
+    <div class="stat omit"><div class="value">${json.resumen.OMITIDO || 0}</div><div class="label">Omitidos</div></div>
+    <div class="stat"><div class="value">${json.resumen.PENDIENTE || 0}</div><div class="label">Pendientes</div></div>`;
+
+  $("tbody-resultado").innerHTML = json.detalle.map((d) => {
+    const puedeVer = d.estado === "GENERADO" || d.estado === "OK" || d.archivo;
+    const acciones = puedeVer
+      ? `<div style="display:flex; gap:6px; justify-content:center;">
+           <button type="button" class="btn-action ver" onclick="verCertificado('${d.correo}')" title="Ver certificado en la página">👁 Ver</button>
+           <a href="/certificados/${encodeURIComponent(d.correo)}?descargar=1" target="_blank" class="btn-action descargar" title="Descargar PDF">⬇ Descargar</a>
+         </div>`
+      : `<span class="muted" style="text-align:center;display:block;">—</span>`;
+
+    return `
+      <tr>
+        <td>${d.correo || "—"}</td>
+        <td>${d.nombre || "—"}</td>
+        <td>${d.rol || "—"}</td>
+        <td>${badge(d.estado)}</td>
+        <td class="muted">${d.detalle || ""}</td>
+        <td>${acciones}</td>
+      </tr>`;
+  }).join("");
+
+  $("advertencias").innerHTML = (json.advertencias || [])
+    .map((a) => `<div class="msg info">⚠ ${a}</div>`).join("");
+}
+
+async function cargarTrazabilidad() {
+  const evento = $("filtro-evento").value;
+  const estado = $("filtro-estado").value;
+  const params = new URLSearchParams();
+  if (evento) params.set("evento", evento);
+  if (estado) params.set("estado", estado);
+
+  const [res, resStats, resEventos] = await Promise.all([
+    fetch("/api/envios?" + params.toString()),
+    fetch("/api/estadisticas" + (evento ? "?evento=" + encodeURIComponent(evento) : "")),
+    fetch("/api/eventos"),
+  ]);
+
+  const data = await res.json();
+  $("tbody-trazabilidad").innerHTML = (data.envios || []).map((e) => {
+    const puedeVer = e.estado === "GENERADO" || e.estado === "OK";
+    const acciones = puedeVer
+      ? `<div style="display:flex; gap:6px; justify-content:center;">
+           <button type="button" class="btn-action ver" onclick="verCertificado('${e.correo}')" title="Ver certificado">👁 Ver</button>
+           <a href="/certificados/${encodeURIComponent(e.correo)}?descargar=1" target="_blank" class="btn-action descargar" title="Descargar PDF">⬇</a>
+         </div>`
+      : `<span class="muted" style="text-align:center;display:block;">—</span>`;
+
+    return `
+      <tr>
+        <td>${e.id}</td><td>${e.evento}</td><td>${e.rol || "—"}</td>
+        <td>${e.nombre || "—"}</td><td class="muted">${e.correo || "—"}</td>
+        <td>${badge(e.estado)}</td><td class="muted">${(e.fecha || "").replace("T", " ")}</td>
+        <td>${acciones}</td>
+      </tr>`;
+  }).join("") || `<tr><td colspan="8" class="muted">Sin registros todavía.</td></tr>`;
+
+  const stats = (await resStats.json()).estadisticas || {};
+  $("stats-trazabilidad").innerHTML = `
+    <div class="stat"><div class="value">${stats.total || 0}</div><div class="label">Registros</div></div>
+    <div class="stat" style="color:#0284c7"><div class="value" style="color:#0284c7">${(stats.por_estado || {}).GENERADO || 0}</div><div class="label">Generados</div></div>
+    <div class="stat ok"><div class="value">${(stats.por_estado || {}).OK || 0}</div><div class="label">Enviados</div></div>
+    <div class="stat error"><div class="value">${(stats.por_estado || {}).ERROR || 0}</div><div class="label">Errores</div></div>
+    <div class="stat omit"><div class="value">${(stats.por_estado || {}).OMITIDO || 0}</div><div class="label">Omitidos</div></div>
+    <div class="stat"><div class="value">${stats.tasa_exito || 0}%</div><div class="label">Tasa de éxito</div></div>`;
+
+  const eventos = (await resEventos.json()).eventos || [];
+  const select = $("filtro-evento");
+  const actual = select.value;
+  select.innerHTML = '<option value="">Todos los eventos</option>';
+  eventos.forEach((ev) => {
+    const opt = document.createElement("option");
+    opt.value = ev.nombre;
+    opt.textContent = `${ev.nombre} (${ev.total_envios})`;
+    select.appendChild(opt);
+  });
+  select.value = actual;
+}
+
+async function probarSmtp() {
+  mostrarMensaje("Probando conexión con el servidor SMTP…", "info");
+  const res = await fetch("/api/smtp/verificar", { method: "POST" });
+  const json = await res.json();
+  mostrarMensaje(`SMTP ${json.estado}: ${json.detalle}`, json.estado === "ERROR" ? "err" : "ok");
+}
+
+$("btn-validar").addEventListener("click", validar);
+$("btn-generar").addEventListener("click", generar);
+$("btn-procesar").addEventListener("click", procesar);
+$("btn-smtp").addEventListener("click", probarSmtp);
+$("btn-refrescar").addEventListener("click", cargarTrazabilidad);
+$("filtro-evento").addEventListener("change", cargarTrazabilidad);
+$("filtro-estado").addEventListener("change", cargarTrazabilidad);
+
+cargarEstado();
+cargarPlantillas();
+cargarTrazabilidad();
+setInterval(cargarTrazabilidad, 15000);
+</script>
+</body>
+</html>
